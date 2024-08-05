@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const pokemons = await fetch("https://pokeapi.co/api/v2/pokemon/ditto");
+
+const pokemonsJson = await pokemons.json();
+
+console.log(pokemonsJson);
+---
+
+<Layout title="About the project.">
+	<main></main>
+</Layout>
