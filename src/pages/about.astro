@@ -5,7 +5,7 @@ const pokemons = await fetch("https://pokeapi.co/api/v2/pokemon/ditto");
 
 const pokemonsJson = await pokemons.json();
 
-console.log(pokemonsJson);
+console.log(`Pokemons: ${pokemonsJson}`);
 ---
 
 <Layout title="About the project.">
