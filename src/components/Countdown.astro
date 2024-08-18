@@ -1,0 +1,249 @@
+---
+import CountdownNumber from "./CountdownNumber.astro";
+
+console.log("Cargando Countdown");
+---
+
+<div class="flex-col">
+	<div class="flex justify-center text-white max-lg:text-5xl lg:text-7xl">
+		<CountdownNumber timeType="hours" />
+		<p class="my-auto">:</p>
+		<CountdownNumber timeType="minutes" />
+		<p class="my-auto">:</p>
+		<CountdownNumber timeType="seconds" />
+	</div>
+
+	<div class="flex gap-3 text-white">
+		<div class="ml-auto">
+			<button
+				id="start"
+				class="ml-auto w-32 rounded border-2 bg-green-500 p-3 hover:bg-green-300 hover:text-black"
+			>
+				Start
+			</button>
+			<button
+				id="pause"
+				class="ml-auto hidden w-32 rounded border-2 bg-red-500 p-3 hover:bg-red-300 hover:text-black"
+			>
+				Pause
+			</button>
+		</div>
+		<button
+			id="reset"
+			class="mr-auto w-32 rounded border-2 bg-blue-500 p-3 hover:bg-blue-300 hover:text-black"
+		>
+			Reset
+		</button>
+	</div>
+</div>
+<script>
+	let timeTypes = ["hours", "minutes", "seconds"];
+
+	let timeValues = {
+		hours: 0,
+		minutes: 0,
+		seconds: 0,
+	};
+
+	let timeInterval = null;
+	let alarmLights = null;
+	let alarmTimeout = null;
+
+	const audio = new Audio("/sound/alarm.mp3");
+
+	const startButton = document.getElementById("start");
+	const pauseButton = document.getElementById("pause");
+	const resetButton = document.getElementById("reset");
+
+	document.addEventListener("DOMContentLoaded", function () {
+		timeTypes.forEach((timeType) => {
+			document
+				.getElementById(`${timeType}-sub`)
+				.addEventListener("click", function () {
+					console.log(`Restando ${timeType}`);
+					//Input type number
+					const timeElement = document.getElementById(
+						`${timeType}-time`,
+					);
+					timeValues[timeType] = timeValues[timeType] - 1; // Evita valores negativos
+
+					//If -1 or less, change it to the max value
+
+					if (
+						(timeType == "seconds" && timeValues[timeType] <= -1) ||
+						(timeType == "minutes" && timeValues[timeType] <= -1)
+					) {
+						timeValues[timeType] = 59;
+						timeElement.textContent = timeValues[timeType]
+							.toString()
+							.padStart(2, "0");
+					} else if (
+						timeType == "hours" &&
+						timeValues[timeType] <= -1
+					) {
+						timeValues[timeType] = 99;
+						timeElement.textContent = timeValues[timeType]
+							.toString()
+							.padStart(2, "0");
+					} else {
+						timeElement.textContent = timeValues[timeType]
+							.toString()
+							.padStart(2, "0");
+					}
+				});
+
+			document
+				.getElementById(`${timeType}-sum`)
+				.addEventListener("click", function () {
+					console.log(`Sumando ${timeType}`);
+
+					const timeElement = document.getElementById(
+						`${timeType}-time`,
+					);
+
+					timeValues[timeType] += 1;
+
+					if (
+						(timeType == "minutes" && timeValues[timeType] >= 60) ||
+						(timeType == "seconds" && timeValues[timeType] >= 60) ||
+						(timeType == "hours" && timeValues[timeType] >= 99)
+					) {
+						timeValues[timeType] = 0;
+						timeElement.textContent = timeValues[timeType]
+							.toString()
+							.padStart(2, "0");
+					} else {
+						timeElement.textContent = timeValues[timeType]
+							.toString()
+							.padStart(2, "0");
+					}
+				});
+		});
+	});
+
+	const hoursElement = document.getElementById("hours-time");
+	const minutesElement = document.getElementById("minutes-time");
+	const secondsElement = document.getElementById("seconds-time");
+
+	// Start button
+	startButton.addEventListener("click", function () {
+		console.log("Start");
+		if (timeInterval) {
+			clearInterval(timeInterval);
+		}
+
+		if (
+			timeValues.hours == 0 &&
+			timeValues.minutes == 0 &&
+			timeValues.seconds == 0
+		) {
+			return;
+		}
+
+		startButton.classList.add("hidden");
+		pauseButton.classList.remove("hidden");
+
+		timeInterval = setInterval(function () {
+			if (
+				timeValues.hours > 0 ||
+				timeValues.minutes > 0 ||
+				timeValues.seconds > 0
+			) {
+				timeValues.seconds -= 1;
+				if (timeValues.seconds < 0) {
+					timeValues.seconds = 59;
+					timeValues.minutes -= 1;
+				}
+				if (timeValues.minutes < 0) {
+					timeValues.minutes = 59;
+					timeValues.hours -= 1;
+				}
+				if (timeValues.hours < 0) {
+					timeValues.hours = 0;
+					timeValues.minutes = 0;
+					timeValues.seconds = 0;
+				}
+
+				hoursElement.textContent = timeValues.hours
+					.toString()
+					.padStart(2, "0");
+				minutesElement.textContent = timeValues.minutes
+					.toString()
+					.padStart(2, "0");
+				secondsElement.textContent = timeValues.seconds
+					.toString()
+					.padStart(2, "0");
+			}
+
+			if (
+				timeValues.hours == 0 &&
+				timeValues.minutes == 0 &&
+				timeValues.seconds == 0
+			) {
+				clearInterval(timeInterval);
+				runAlarm();
+			}
+		}, 1000);
+	});
+
+	// Pause button
+	pauseButton.addEventListener("click", function () {
+		console.log("Pause");
+		pauseButton.classList.add("hidden");
+		startButton.classList.remove("hidden");
+
+		clearTimeout(alarmTimeout);
+		clearInterval(timeInterval);
+		stopAlarm();
+	});
+
+	// Reset button
+	resetButton.addEventListener("click", function () {
+		console.log("Reset");
+		stopAlarm();
+		clearTimeout(alarmTimeout);
+		clearInterval(timeInterval);
+
+		timeValues = {
+			hours: 0,
+			minutes: 0,
+			seconds: 0,
+		};
+
+		pauseButton.classList.add("hidden");
+		startButton.classList.remove("hidden");
+
+		hoursElement.textContent = timeValues.hours.toString().padStart(2, "0");
+		minutesElement.textContent = timeValues.minutes
+			.toString()
+			.padStart(2, "0");
+		secondsElement.textContent = timeValues.seconds
+			.toString()
+			.padStart(2, "0");
+	});
+
+	function runAlarm() {
+		clearTimeout(alarmTimeout);
+		audio.play();
+
+		alarmLights = setInterval(function () {
+			document.body.style.backgroundColor =
+				document.body.style.backgroundColor == "red"
+					? "#13151a"
+					: "red";
+		}, 500);
+
+		alarmTimeout = setTimeout(function () {
+			stopAlarm();
+		}, 10000);
+	}
+
+	function stopAlarm() {
+		audio.pause();
+		clearInterval(alarmLights);
+		document.body.style.backgroundColor = "#13151a";
+
+		pauseButton.classList.add("hidden");
+		startButton.classList.remove("hidden");
+	}
+</script>

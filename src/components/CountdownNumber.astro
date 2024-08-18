@@ -1,0 +1,29 @@
+---
+interface Props {
+	timeType: string;
+}
+
+const Props = Astro.props;
+---
+
+<div class="flex-col">
+	<button
+		id={`${Props.timeType}-sum`}
+		class="time-button m-auto block size-fit hover:bg-white hover:text-black"
+	>
+		+
+	</button>
+	<p id={`${Props.timeType}-time`} class="m-auto size-fit">00</p>
+	<!--input
+		id={`${Props.timeType}-time`}
+		class="w-32 text-center text-black"
+		type="number"
+		value="00"
+	/-->
+	<button
+		id={`${Props.timeType}-sub`}
+		class="time-button m-auto block size-fit hover:bg-white hover:text-black"
+	>
+		-
+	</button>
+</div>
