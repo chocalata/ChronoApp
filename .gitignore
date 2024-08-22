@@ -25,6 +25,5 @@ pnpm-debug.log*
 .idea/
 
 # MY IGNORES
-package-lock.json
 android/
 ios/
