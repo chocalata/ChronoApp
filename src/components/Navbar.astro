@@ -1,0 +1,87 @@
+---
+console.log("Cargando Navbar");
+---
+
+<nav class="flex justify-center">
+	<ul class="flex bg-gray-700 text-white">
+		<li
+			id="countdown-item"
+			class="nav-item hover:text-app-orange cursor-pointer transition duration-300 hover:bg-gray-500"
+		>
+			<a href="#countdown" class="block p-4" data-page="countdown"
+				>Countdown</a
+			>
+		</li>
+		<li
+			id="chronometer-item"
+			class="nav-item hover:text-app-orange cursor-pointer transition duration-300 hover:bg-gray-500"
+		>
+			<a href="#chronometer" class="block p-4" data-page="chronometer"
+				>Chronometer</a
+			>
+		</li>
+		<li
+			id="interval-timer-item"
+			class="nav-item hover:text-app-orange cursor-pointer transition duration-300 hover:bg-gray-500"
+		>
+			<a
+				href="#interval-timer"
+				class="block p-4"
+				data-page="interval-timer">Interval Timer</a
+			>
+		</li>
+	</ul>
+</nav>
+
+<script>
+	interface PageSelectEvent extends CustomEvent {
+		detail: {
+			page: string;
+		};
+	}
+	document.querySelectorAll("a").forEach((anchor) => {
+		anchor.addEventListener("click", () => {
+			const page = anchor.dataset.page;
+
+			const onSelect = new CustomEvent("onSelect", {
+				detail: { page },
+				bubbles: true,
+			}) as PageSelectEvent;
+
+			anchor.dispatchEvent(onSelect);
+		});
+	});
+
+	// Get all nav items
+	const navItems = document.querySelectorAll(".nav-item");
+
+	// Function to handle click events
+	navItems.forEach((item) => {
+		item.addEventListener("click", () => {
+			// Remove active styles from all items
+			navItems.forEach((i) => {
+				i.classList.remove(
+					"bg-gray-500",
+					"text-app-orange",
+					"nav-selected",
+				); // Resetting styles
+			});
+
+			// Add active styles to the clicked item
+			item.classList.add(
+				"bg-gray-500",
+				"text-app-orange",
+				"nav-selected",
+			);
+		});
+	});
+
+	if (window.location.hash) {
+		const hash = window.location.hash.slice(1);
+		const item = document.getElementById(`${hash}-item`);
+		item.classList.add("bg-gray-500", "text-app-orange", "nav-selected");
+	} else {
+		const item = document.getElementById("countdown-item");
+		item.classList.add("bg-gray-500", "text-app-orange", "nav-selected");
+	}
+</script>

@@ -1,14 +1,65 @@
 ---
-import Countdown from "../components/Countdown.astro";
 import Layout from "../layouts/Layout.astro";
+
+import Chronometer from "../components/functions/Chronometer.astro";
+import Countdown from "../components/functions/Countdown.astro";
+import IntervalTimer from "../components/functions/IntervalTimer.astro";
 
 console.log("Cargando index");
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Chrono app">
 	<main class="h-full">
-		<Countdown />
+		<div id="countdown-container">
+			<Countdown />
+		</div>
+		<div id="chronometer-container" style="display: none;">
+			<Chronometer />
+		</div>
+		<div id="interval-timer-container" style="display: none;">
+			<IntervalTimer />
+		</div>
 	</main>
 </Layout>
 
-<script></script>
+<script>
+	interface PageSelectEvent extends CustomEvent {
+		detail: {
+			page: string;
+		};
+	}
+
+	// Object mapping pages to their container IDs
+	const pageContainers = {
+		countdown: "countdown-container",
+		chronometer: "chronometer-container",
+		"interval-timer": "interval-timer-container",
+	};
+
+	// Function to show selected page and hide others
+	function showPage(selectedPage: string) {
+		Object.entries(pageContainers).forEach(([page, containerId]) => {
+			const container = document.getElementById(containerId);
+			if (container) {
+				container.style.display =
+					page === selectedPage ? "block" : "none";
+			}
+		});
+	}
+
+	// Listen for page selection event
+	document.addEventListener("onSelect", ((e: PageSelectEvent) => {
+		showPage(e.detail.page);
+	}) as EventListener);
+
+	// Check hash on initial load
+	if (window.location.hash) {
+		const hash = window.location.hash.slice(1);
+		if (hash in pageContainers) {
+			showPage(hash);
+		}
+	} else {
+		window.location.hash = "countdown"; //
+		showPage("countdown");
+	}
+</script>

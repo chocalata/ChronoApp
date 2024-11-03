@@ -1,5 +1,5 @@
 ---
-import CountdownNumber from "./CountdownNumber.astro";
+import CountdownNumber from "./old-CountdownNumber.astro";
 
 console.log("Cargando Countdown");
 ---
@@ -54,6 +54,7 @@ console.log("Cargando Countdown");
 	const startButton = document.getElementById("start");
 	const pauseButton = document.getElementById("pause");
 	const resetButton = document.getElementById("reset");
+	const favicon = document.getElementById("favicon");
 
 	document.addEventListener("DOMContentLoaded", function () {
 		timeTypes.forEach((timeType) => {
@@ -128,6 +129,7 @@ console.log("Cargando Countdown");
 	// Start button
 	startButton.addEventListener("click", function () {
 		console.log("Start");
+
 		if (timeInterval) {
 			clearInterval(timeInterval);
 		}
@@ -139,6 +141,8 @@ console.log("Cargando Countdown");
 		) {
 			return;
 		}
+
+		favicon.setAttribute("href", "/img/start.svg");
 
 		startButton.classList.add("hidden");
 		pauseButton.classList.remove("hidden");
@@ -189,6 +193,9 @@ console.log("Cargando Countdown");
 	// Pause button
 	pauseButton.addEventListener("click", function () {
 		console.log("Pause");
+
+		favicon.setAttribute("href", "/img/stop.svg");
+
 		pauseButton.classList.add("hidden");
 		startButton.classList.remove("hidden");
 
@@ -200,6 +207,9 @@ console.log("Cargando Countdown");
 	// Reset button
 	resetButton.addEventListener("click", function () {
 		console.log("Reset");
+
+		favicon.setAttribute("href", "/img/stop.svg");
+
 		stopAlarm();
 		clearTimeout(alarmTimeout);
 		clearInterval(timeInterval);

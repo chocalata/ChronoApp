@@ -1,4 +1,5 @@
 ---
+import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 
 interface Props {
@@ -14,19 +15,31 @@ const { title } = Astro.props;
 		<meta charset="UTF-8" />
 		<meta name="description" content="Astro description" />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link
+			id="favicon"
+			rel="icon"
+			type="image/svg+xml"
+			href="/img/stop.svg"
+		/>
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="m-0 min-h-full min-w-full">
+	<body class="m-0 grid min-h-dvh min-w-full grid-rows-[auto_1fr_auto]">
+		<img
+			id="image"
+			class="pointer-events-none absolute inset-0 -z-10 m-auto h-full opacity-10"
+			src="/img/stop.svg"
+			alt="Stop Icon"
+		/>
 		<Header />
 		<slot />
+		<Footer />
 	</body>
 </html>
 <style is:global>
 	html {
 		font-family: system-ui, sans-serif;
-		background: #13151a;
+		background: #2e323e;
 		color-scheme: dark light;
 	}
 </style>
