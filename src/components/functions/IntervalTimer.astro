@@ -1,9 +1,11 @@
 ---
-console.log("Cargando Interval timer");
+import TimeManager from "../TimeManager.astro";
+
+const functionType = "interval-timer";
 ---
 
-<div class="">
-	<h1>Interval timer</h1>
-</div>
+<TimeManager functionType={functionType} />
 
-<script></script>
+<style></style>
+
+<script is:inline></script>

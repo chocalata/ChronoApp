@@ -1,9 +1,11 @@
 ---
-console.log("Cargando Countdown");
+import TimeManager from "../TimeManager.astro";
+
+const functionType = "countdown";
 ---
 
-<div class="">
-	<h1>Countdown</h1>
-</div>
+<TimeManager functionType={functionType} />
 
-<script></script>
+<style></style>
+
+<script is:inline></script>

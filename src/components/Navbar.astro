@@ -3,10 +3,12 @@ console.log("Cargando Navbar");
 ---
 
 <nav class="flex justify-center">
-	<ul class="flex bg-gray-700 text-white">
+	<ul
+		class="responsive-navbar flex flex-col w-full text-center bg-gray-700 text-white md:flex-row md:w-auto"
+	>
 		<li
 			id="countdown-item"
-			class="nav-item hover:text-app-orange cursor-pointer transition duration-300 hover:bg-gray-500"
+			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
 			<a href="#countdown" class="block p-4" data-page="countdown"
 				>Countdown</a
@@ -14,7 +16,7 @@ console.log("Cargando Navbar");
 		</li>
 		<li
 			id="chronometer-item"
-			class="nav-item hover:text-app-orange cursor-pointer transition duration-300 hover:bg-gray-500"
+			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
 			<a href="#chronometer" class="block p-4" data-page="chronometer"
 				>Chronometer</a
@@ -22,11 +24,11 @@ console.log("Cargando Navbar");
 		</li>
 		<li
 			id="interval-timer-item"
-			class="nav-item hover:text-app-orange cursor-pointer transition duration-300 hover:bg-gray-500"
+			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
 			<a
 				href="#interval-timer"
-				class="block p-4"
+				class="block whitespace-nowrap p-4"
 				data-page="interval-timer">Interval Timer</a
 			>
 		</li>
@@ -63,7 +65,7 @@ console.log("Cargando Navbar");
 				i.classList.remove(
 					"bg-gray-500",
 					"text-app-orange",
-					"nav-selected",
+					"nav-selected"
 				); // Resetting styles
 			});
 
@@ -71,7 +73,7 @@ console.log("Cargando Navbar");
 			item.classList.add(
 				"bg-gray-500",
 				"text-app-orange",
-				"nav-selected",
+				"nav-selected"
 			);
 		});
 	});

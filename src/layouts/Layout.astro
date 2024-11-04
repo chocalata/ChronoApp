@@ -27,7 +27,7 @@ const { title } = Astro.props;
 	<body class="m-0 grid min-h-dvh min-w-full grid-rows-[auto_1fr_auto]">
 		<img
 			id="image"
-			class="pointer-events-none absolute inset-0 -z-10 m-auto h-full opacity-10"
+			class="pointer-events-none absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mt-20 sm:mt-0 max-h-[60vh] h-auto opacity-10 -z-10"
 			src="/img/stop.svg"
 			alt="Stop Icon"
 		/>
@@ -42,4 +42,5 @@ const { title } = Astro.props;
 		background: #2e323e;
 		color-scheme: dark light;
 	}
+
 </style>

@@ -1,0 +1,339 @@
+---
+interface Props {
+	functionType: string;
+}
+
+const functionType = Astro.props.functionType;
+---
+
+<div id={`astro-data-${functionType}`} data-functiontype={functionType}></div>
+<div class="flex select-none flex-col items-center justify-center space-y-8">
+	<div class="flex flex-col items-center space-y-2">
+		<div
+			class="xxs:text-4xl flex items-center justify-center space-x-2 rounded-xl bg-black/10 p-6 font-mono text-2xl backdrop-blur-sm md:text-6xl xl:text-8xl"
+		>
+			<div class="time-unit-container">
+				<input
+					type="number"
+					value="00"
+					data-unit="hours"
+					data-function-type={functionType}
+					class="draggable-input cursor-ns-resize rounded-md bg-black bg-opacity-0 text-white placeholder-white placeholder-opacity-50 outline-none transition-all hover:bg-opacity-25"
+				/>
+			</div>
+			<span>:</span>
+			<div class="time-unit-container">
+				<input
+					type="number"
+					value="00"
+					data-unit="minutes"
+					data-function-type={functionType}
+					class="draggable-input cursor-ns-resize rounded-md bg-black bg-opacity-0 text-white placeholder-white placeholder-opacity-50 outline-none transition-all hover:bg-opacity-25"
+				/>
+			</div>
+			<span>:</span>
+			<div class="time-unit-container">
+				<input
+					type="number"
+					value="00"
+					data-unit="seconds"
+					data-function-type={functionType}
+					class="draggable-input cursor-ns-resize rounded-md bg-black bg-opacity-0 text-white placeholder-white placeholder-opacity-50 outline-none transition-all hover:bg-opacity-25"
+				/>
+			</div>
+			<span>.</span>
+			<div class="time-unit-container">
+				<input
+					type="number"
+					value="00"
+					data-unit="milliseconds"
+					data-function-type={functionType}
+					class="draggable-input cursor-ns-resize rounded-md bg-black bg-opacity-0 text-white placeholder-white placeholder-opacity-50 outline-none transition-all hover:bg-opacity-25"
+				/>
+			</div>
+		</div>
+		<button
+			data-action="save"
+			data-function-type={functionType}
+			class="rounded-full bg-green-500/30 p-4 text-white transition-colors hover:bg-green-600/30 xl:p-5"
+		>
+			<svg
+				class="h-8 w-8 xl:h-10 xl:w-10"
+				xmlns="http://www.w3.org/2000/svg"
+				width="20"
+				height="20"
+				viewBox="0 0 24 24"
+				fill="currentColor"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><path
+					d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z"
+				></path></svg
+			>
+		</button>
+	</div>
+
+	<div class="flex space-x-4">
+		<button
+			data-action="toggle"
+			data-function-type={functionType}
+			class="rounded-full bg-blue-500/30 p-4 text-white transition-colors hover:bg-blue-600/30 xl:p-5"
+		>
+			<svg
+				class="h-8 w-8 xl:h-10 xl:w-10"
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><polygon points="5 3 19 12 5 21 5 3"></polygon></svg
+			>
+		</button>
+		<button
+			data-action="reset"
+			data-function-type={functionType}
+			class="rounded-full bg-gray-500/30 p-4 text-white transition-colors hover:bg-gray-600/30 xl:p-5"
+		>
+			<svg
+				class="h-8 w-8 xl:h-10 xl:w-10"
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><path
+					d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+				></path></svg
+			>
+		</button>
+	</div>
+</div>
+
+<style>
+	.time-unit-container {
+		position: relative;
+	}
+
+	.time-unit {
+		padding: 0.5rem;
+		border-radius: 0.25rem;
+		transition: background-color 0.2s;
+	}
+
+	.time-unit:hover {
+		background-color: rgba(0, 0, 0, 0.1);
+	}
+
+	.time-unit:focus {
+		background-color: rgba(0, 0, 0, 0.2);
+		outline: none;
+	}
+
+	/* Hide spinner buttons in Chrome, Safari, Edge, and Opera */
+	input[type="number"]::-webkit-outer-spin-button,
+	input[type="number"]::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Hide spinner buttons in Firefox */
+	input[type="number"] {
+		-moz-appearance: textfield;
+	}
+
+	/* Optional: Set padding and width to remove extra space */
+	input[type="number"] {
+		width: 2ch; /* Set width to fit two characters */
+	}
+</style>
+
+<script>
+	interface TimeData {
+		hours: string;
+		minutes: string;
+		seconds: string;
+		milliseconds: string;
+	}
+
+	interface IntervalTimeData {
+		sets: number;
+		work: TimeData;
+		rest: TimeData;
+	}
+
+	interface UserData {
+		chronometer?: TimeData[];
+		countdown?: TimeData[];
+		intervalTimer?: IntervalTimeData[];
+	}
+
+	class TimeManager {
+		private functionType: string;
+		private isDragging: boolean;
+		private lastY: number;
+		private editingEvent: MouseEvent | TouchEvent | null;
+		private inputs: NodeListOf<HTMLInputElement>;
+		private saveButton: HTMLButtonElement;
+
+		constructor(functionType: string) {
+			this.functionType = functionType;
+			this.isDragging = false;
+			this.lastY = 0;
+			this.editingEvent = null;
+
+			// Initialize DOM elements with proper typing
+			this.inputs = document.querySelectorAll<HTMLInputElement>(
+				`input[data-function-type="${this.functionType}"]`
+			);
+			this.saveButton = document.querySelector<HTMLButtonElement>(
+				`button[data-action="save"][data-function-type="${this.functionType}"]`
+			)!;
+
+			this.init();
+		}
+
+		private init(): void {
+			// Add event listeners
+			this.inputs.forEach((input) => {
+				input.addEventListener("input", () => this.formatInput(input));
+			});
+
+			this.saveButton.addEventListener("click", () => this.saveTime());
+
+			// Dragging functionality
+			document.addEventListener("mousedown", (e: MouseEvent) =>
+				this.handleStart(e)
+			);
+			document.addEventListener("mousemove", (e: MouseEvent) =>
+				this.handleMove(e)
+			);
+			document.addEventListener("mouseup", () => this.handleEnd());
+
+			document.addEventListener("touchstart", (e: TouchEvent) =>
+				this.handleStart(e)
+			);
+			document.addEventListener("touchmove", (e: TouchEvent) =>
+				this.handleMove(e)
+			);
+			document.addEventListener("touchend", () => this.handleEnd());
+		}
+
+		private formatInput(input: HTMLInputElement): void {
+			const value = input.value;
+			const unit = input.dataset.unit;
+
+			if (value.length === 1) {
+				input.value = `0${value}`;
+			}
+
+			if (value.length > 2) {
+				input.value = value.slice(-2);
+			}
+
+			switch (unit) {
+				case "hours":
+					if (parseInt(input.value) > 23) input.value = "00";
+					else if (parseInt(input.value) < 0) input.value = "23";
+					break;
+				case "minutes":
+				case "seconds":
+					if (parseInt(input.value) > 59) input.value = "00";
+					else if (parseInt(input.value) < 0) input.value = "59";
+					break;
+				case "milliseconds":
+					if (parseInt(input.value) > 99) input.value = "00";
+					else if (parseInt(input.value) < 0) input.value = "99";
+					break;
+			}
+		}
+
+		private saveTime(): void {
+			const time: TimeData = {
+				hours: this.getInputValue("hours"),
+				minutes: this.getInputValue("minutes"),
+				seconds: this.getInputValue("seconds"),
+				milliseconds: this.getInputValue("milliseconds"),
+			};
+
+			// Recuperar datos del localStorage y asegurarse de que userData no sea null
+			let stringUserData = localStorage.getItem("user-data");
+			let userData: UserData = stringUserData
+				? JSON.parse(stringUserData)
+				: {};
+
+			// Inicializar el array correspondiente si no existe
+			if (!userData[this.functionType]) {
+				userData[this.functionType] = [];
+			}
+
+			// Agregar el nuevo tiempo al array
+			userData[this.functionType].push(time);
+
+			// Guardar los datos actualizados en localStorage
+			localStorage.setItem("user-data", JSON.stringify(userData));
+		}
+
+		private getInputValue(unit: string): string {
+			const input = document.querySelector<HTMLInputElement>(
+				`input[data-unit="${unit}"][data-function-type="${this.functionType}"]`
+			);
+			return input?.value ?? "00";
+		}
+
+		private handleStart(event: MouseEvent | TouchEvent): void {
+			const target = event.target as HTMLElement;
+			if (
+				!target.dataset.functionType ||
+				target.dataset.functionType !== this.functionType
+			)
+				return;
+			if (!target.classList.contains("draggable-input")) return;
+
+			this.isDragging = true;
+			this.lastY =
+				event instanceof MouseEvent
+					? event.clientY
+					: event.touches[0].clientY;
+			this.editingEvent = event;
+		}
+
+		private handleMove(event: MouseEvent | TouchEvent): void {
+			if (!this.isDragging || !this.editingEvent) return;
+
+			const input = this.editingEvent.target as HTMLInputElement;
+			const value = Number(input.value);
+			const currentY =
+				event instanceof MouseEvent
+					? event.clientY
+					: event.touches[0].clientY;
+			const deltaY = Math.round(this.lastY - currentY);
+
+			input.value = (value + deltaY).toString();
+			this.lastY = currentY;
+			this.formatInput(input);
+		}
+
+		private handleEnd(): void {
+			this.isDragging = false;
+			this.editingEvent = null;
+		}
+	}
+
+	// Initialize all time managers
+	document
+		.querySelectorAll<HTMLElement>('[id^="astro-data-"]')
+		.forEach((element) => {
+			const functionType = element.dataset.functiontype;
+			if (functionType) {
+				new TimeManager(functionType);
+			}
+		});
+</script>
