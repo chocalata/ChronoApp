@@ -2,15 +2,15 @@
 console.log("Cargando Navbar");
 ---
 
-<nav class="flex justify-center">
+<nav class="flex justify-center relative">
 	<ul
-		class="responsive-navbar flex flex-col w-full text-center bg-gray-700 text-white md:flex-row md:w-auto"
+		class="responsive-navbar flex w-full flex-col bg-gray-700 text-center text-white md:w-auto md:flex-row"
 	>
 		<li
 			id="countdown-item"
 			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
-			<a href="#countdown" class="block p-4" data-page="countdown"
+			<a class="block p-4" data-page="countdown"
 				>Countdown</a
 			>
 		</li>
@@ -18,7 +18,7 @@ console.log("Cargando Navbar");
 			id="chronometer-item"
 			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
-			<a href="#chronometer" class="block p-4" data-page="chronometer"
+			<a class="block p-4" data-page="chronometer"
 				>Chronometer</a
 			>
 		</li>
@@ -27,7 +27,6 @@ console.log("Cargando Navbar");
 			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
 			<a
-				href="#interval-timer"
 				class="block whitespace-nowrap p-4"
 				data-page="interval-timer">Interval Timer</a
 			>
@@ -51,6 +50,12 @@ console.log("Cargando Navbar");
 			}) as PageSelectEvent;
 
 			anchor.dispatchEvent(onSelect);
+
+			const onSelectPage = new CustomEvent(`onSelect-${page}`, {
+				bubbles: true,
+			});
+
+			anchor.dispatchEvent(onSelectPage);
 		});
 	});
 
@@ -79,7 +84,7 @@ console.log("Cargando Navbar");
 	});
 
 	if (window.location.hash) {
-		const hash = window.location.hash.slice(1);
+		const hash = window.location.hash.split("/")[0].slice(1);
 		const item = document.getElementById(`${hash}-item`);
 		item.classList.add("bg-gray-500", "text-app-orange", "nav-selected");
 	} else {

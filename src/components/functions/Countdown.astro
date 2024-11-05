@@ -1,11 +1,143 @@
 ---
 import TimeManager from "../TimeManager.astro";
+import Buttons from "./Buttons.astro";
 
 const functionType = "countdown";
 ---
 
 <TimeManager functionType={functionType} />
 
+<Buttons functionType={functionType} />
+
 <style></style>
 
-<script is:inline></script>
+<script define:vars={{ functionType }}>
+	const setRunning = new CustomEvent(`changeState-${functionType}`, {
+		detail: { isRunning: true },
+		bubbles: true,
+	});
+
+	const setNoRunning = new CustomEvent(`changeState-${functionType}`, {
+		detail: { isRunning: false },
+		bubbles: true,
+	});
+
+	const hours = document.getElementById(`hours-${functionType}`);
+	const minutes = document.getElementById(`minutes-${functionType}`);
+	const seconds = document.getElementById(`seconds-${functionType}`);
+	const milliseconds = document.getElementById(
+		`milliseconds-${functionType}`
+	);
+
+	let countdownTime = 0;
+	let initialCountdownTime = 0;
+	let endTime = 0;
+	let countdownInterval = null;
+	let remainingTime = 0;
+
+	let alarmLights = null;
+	let alarmTimeout = null;
+	const audio = new Audio("/sound/alarm.mp3");
+
+	// Example: Function to initialize countdown time (could be replaced with input)
+	function setCountdown(hours, minutes, seconds, milliseconds) {
+		initialCountdownTime =
+			parseInt(milliseconds) * 10 +
+			parseInt(seconds) * 1000 +
+			parseInt(minutes) * 60 * 1000 +
+			parseInt(hours) * 60 * 60 * 1000;
+
+		countdownTime = initialCountdownTime;
+
+		remainingTime = initialCountdownTime;
+	}
+
+	setCountdown(hours.value, minutes.value, seconds.value, milliseconds.value);
+
+	document.addEventListener(`updateFunctionData-${functionType}`, (e) => {
+		const { time } = e.detail;
+
+		setCountdown(time.hours, time.minutes, time.seconds, time.milliseconds);
+	});
+
+	// Start countdown
+	document.addEventListener(`start-${functionType}`, (e) => {
+		console.log(remainingTime);
+		if (remainingTime <= 0) {
+			return;
+		}
+		endTime = Date.now() + countdownTime;
+		countdownInterval = setInterval(updateDisplay, 10);
+
+		document.dispatchEvent(setRunning);
+	});
+
+	// Stop countdown
+	document.addEventListener(`stop-${functionType}`, (e) => {
+		clearInterval(countdownInterval);
+
+		stopAlarm();
+
+		countdownTime = Math.max(0, endTime - Date.now());
+	});
+
+	// Reset countdown
+	document.addEventListener(`reset-${functionType}`, (e) => {
+		if (initialCountdownTime <= 0) {
+			return;
+		}
+
+		clearInterval(countdownInterval);
+
+		stopAlarm();
+
+		countdownTime = initialCountdownTime; // Reset to initial time
+		endTime = Date.now() + countdownTime;
+
+		updateDisplay();
+	});
+
+	function updateDisplay() {
+		remainingTime = Math.max(0, endTime - Date.now());
+
+		const ms = Math.floor((remainingTime % 1000) / 10);
+		const s = Math.floor((remainingTime / 1000) % 60);
+		const m = Math.floor((remainingTime / (1000 * 60)) % 60);
+		const h = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+
+		milliseconds.value = ms.toString().padStart(2, "0");
+		seconds.value = s.toString().padStart(2, "0");
+		minutes.value = m.toString().padStart(2, "0");
+		hours.value = h.toString().padStart(2, "0");
+
+		// Stop the countdown at zero
+		if (remainingTime <= 0) {
+			clearInterval(countdownInterval);
+			runAlarm();
+		}
+	}
+
+	function runAlarm() {
+		clearTimeout(alarmTimeout);
+		audio.play();
+
+		alarmLights = setInterval(function () {
+			document.body.style.backgroundColor =
+				document.body.style.backgroundColor == "red"
+					? "#2e323e"
+					: "red";
+		}, 500);
+
+		alarmTimeout = setTimeout(function () {
+			stopAlarm();
+		}, 10000);
+	}
+
+	function stopAlarm() {
+		audio.pause();
+		clearInterval(alarmLights);
+		document.body.style.backgroundColor = "#2e323e";
+
+		document.dispatchEvent(setNoRunning);
+	}
+</script>

@@ -1,0 +1,123 @@
+---
+interface Props {
+	functionType: string;
+}
+
+const functionType = Astro.props.functionType;
+---
+
+<div class="mt-4 flex flex-col space-y-4">
+	<div class="flex justify-center space-x-4">
+		<button
+			id=`toggle-${functionType}`
+			data-action="toggle"
+			data-function-type={functionType}
+			class="rounded-full bg-blue-500/30 p-4 text-white transition-colors hover:bg-blue-600/30 xl:p-5"
+		>
+			<svg
+				class="h-8 w-8 xl:h-10 xl:w-10"
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><polygon points="5 3 19 12 5 21 5 3"></polygon></svg
+			>
+		</button>
+		<button
+			id=`reset-${functionType}`
+			data-action="reset"
+			data-function-type={functionType}
+			class="rounded-full bg-gray-500/30 p-4 text-white transition-colors hover:bg-gray-600/30 xl:p-5"
+		>
+			<svg
+				class="h-8 w-8 xl:h-10 xl:w-10"
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><path
+					d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
+				></path></svg
+			>
+		</button>
+	</div>
+</div>
+
+<script define:vars={{ functionType }}>
+
+	class ButtonManager {
+		constructor() {
+			this.isRunning = false;
+			this.favicon = document.getElementById("favicon");
+			this.chronoImage = document.getElementById("chrono-image");
+			this.toggleButton = document.getElementById(
+				`toggle-${functionType}`
+			);
+			this.resetButton = document.getElementById(`reset-${functionType}`);
+
+			document.addEventListener(`changeState-${functionType}`, (e) => {
+				const state = e.detail.isRunning;
+
+				this.changeState(state);
+			});
+
+			this.toggleButton.addEventListener("click", (e) => {
+				if (!this.isRunning) {
+					document.dispatchEvent(
+						new CustomEvent(`start-${functionType}`)
+					);
+				} else {
+					document.dispatchEvent(
+						new CustomEvent(`stop-${functionType}`)
+					);
+				}
+			});
+
+			this.resetButton.addEventListener("click", (e) => {
+				document.dispatchEvent(
+					new CustomEvent(`reset-${functionType}`)
+				);
+			});
+		}
+
+		changeState(running) {
+			this.isRunning = running;
+			const svg = this.toggleButton.querySelector("svg");
+
+			if (running) {
+				document.querySelectorAll(
+					`input[data-function-type="${functionType}"]`
+				).forEach((input) => {
+					input.disabled = true;
+				});
+
+				svg.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"></path>';
+				this.chronoImage.src = "/img/start.svg";
+				this.favicon.href = "/img/start.svg";
+			} else {
+				document.querySelectorAll(
+					`input[data-function-type="${functionType}"]`
+				).forEach((input) => {
+					input.disabled = false;
+				});
+
+				svg.innerHTML =
+					'<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+				this.chronoImage.src = "/img/stop.svg";
+				this.favicon.href = "/img/stop.svg";
+			}
+		}
+	}
+
+	new ButtonManager(functionType);
+</script>

@@ -1,15 +1,110 @@
 ---
-import TimeManager from '../TimeManager.astro'
+import TimeManager from "../TimeManager.astro";
+import Buttons from "./Buttons.astro";
 
-const functionType = 'chronometer'
+const functionType = "chronometer";
 ---
 
-<TimeManager functionType={functionType}/>
+<TimeManager functionType={functionType} />
 
-<style>
+<Buttons functionType={functionType} />
 
-</style>
+<style></style>
 
-<script is:inline>
+<script define:vars={{ functionType }}>
+	const setRunning = new CustomEvent(`changeState-${functionType}`, {
+		detail: { isRunning: true },
+		bubbles: true,
+	});
 
+	const setNoRunning = new CustomEvent(`changeState-${functionType}`, {
+		detail: { isRunning: false },
+		bubbles: true,
+	});
+
+	const hours = document.getElementById(`hours-${functionType}`);
+	const minutes = document.getElementById(`minutes-${functionType}`);
+	const seconds = document.getElementById(`seconds-${functionType}`);
+	const milliseconds = document.getElementById(
+		`milliseconds-${functionType}`
+	);
+
+	let elapsedTime = 0;
+
+	let startTime = 0;
+
+	setChronometer(
+		hours.value,
+		minutes.value,
+		seconds.value,
+		milliseconds.value
+	);
+
+	let chronoInterval = null;
+
+	function setChronometer(hours, minutes, seconds, milliseconds) {
+		elapsedTime =
+			parseInt(milliseconds) +
+			parseInt(seconds) * 1000 +
+			parseInt(minutes) * 60 * 1000 +
+			parseInt(hours) * 60 * 60 * 1000;
+
+		startTime = Date.now() - elapsedTime;
+	}
+
+	document.addEventListener(`updateFunctionData-${functionType}`, (e) => {
+		console.log("updateFunctionData");
+		const { time } = e.detail;
+
+		setChronometer(
+			time.hours,
+			time.minutes,
+			time.seconds,
+			time.milliseconds
+		);
+	});
+
+	document.addEventListener(`start-${functionType}`, (e) => {
+		document.dispatchEvent(setRunning);
+
+		startTime = Date.now();
+		chronoInterval = setInterval(updateDisplay, 10);
+	});
+
+	document.addEventListener(`stop-${functionType}`, (e) => {
+		document.dispatchEvent(setNoRunning);
+
+		clearInterval(chronoInterval);
+		elapsedTime += Date.now() - startTime;
+	});
+
+	document.addEventListener(`reset-${functionType}`, (e) => {
+		document.dispatchEvent(setNoRunning);
+
+		clearInterval(chronoInterval);
+
+		elapsedTime = 0;
+		startTime = 0;
+
+		// Set display values to zero
+		hours.value = "00";
+		minutes.value = "00";
+		seconds.value = "00";
+		milliseconds.value = "00";
+	});
+
+	function updateDisplay() {
+		// transform elapsed time to display format
+		const timeToDisplay = elapsedTime + (Date.now() - startTime);
+
+		const ms = Math.floor((timeToDisplay % 1000) / 10);
+		const s = Math.floor((timeToDisplay / 1000) % 60);
+		const m = Math.floor((timeToDisplay / (1000 * 60)) % 60);
+		const h = Math.floor((timeToDisplay / (1000 * 60 * 60)) % 24);
+
+		milliseconds.value = ms.toString().padStart(2, "0");
+		seconds.value = s.toString().padStart(2, "0");
+		minutes.value = m.toString().padStart(2, "0");
+		hours.value = h.toString().padStart(2, "0");
+	}
 </script>

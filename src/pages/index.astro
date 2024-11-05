@@ -29,10 +29,15 @@ console.log("Cargando index");
 		};
 	}
 
-	interface UserDataEvent extends CustomEvent {
+	interface PageTimeEvent extends CustomEvent {
 		detail: {
-			data: any;
-			function: string;
+			type: string;
+			time: {
+				hours: string;
+				minutes: string;
+				seconds: string;
+				milliseconds: string;
+			};
 		};
 	}
 
@@ -42,6 +47,12 @@ console.log("Cargando index");
 		chronometer: "chronometer-container",
 		"interval-timer": "interval-timer-container",
 	};
+
+	function setHash(newHash) {
+		if (window.location.hash !== newHash) {
+			window.location.hash = newHash;
+		}
+	}
 
 	// Function to show selected page and hide others
 	function showPage(selectedPage: string) {
@@ -54,53 +65,73 @@ console.log("Cargando index");
 		});
 	}
 
+	function editTime({
+		type,
+		time: { hours, minutes, seconds, milliseconds },
+	}: PageTimeEvent["detail"]) {
+		// Get current page (just the hash #<page>)
+		const page = type;
+		const time = `${hours}_${minutes}_${seconds}_${milliseconds}`;
+
+		setHash(`${page}/${time}`);
+	}
+
 	// Listen for page selection event
 	document.addEventListener("onSelect", ((e: PageSelectEvent) => {
 		showPage(e.detail.page);
 	}) as EventListener);
 
-	function setJsonCookie(name, jsonData) {
-		const value = JSON.stringify(jsonData);
-		document.cookie = `${name}=${encodeURIComponent(value)}`;
-	}
+	// Page format: #<page>/<hours>_<minutes>_<seconds>_<milliseconds>
+	// listen for page time editing event
+	document.addEventListener("onTimeEdit", ((e: PageTimeEvent) => {
+		editTime(e.detail);
+	}) as EventListener);
 
-	function getJsonCookie(name) {
-		const value = `; ${document.cookie}`;
-		const parts = value.split(`; ${name}=`);
-		if (parts.length === 2) {
-			return JSON.parse(
-				decodeURIComponent(parts.pop().split(";").shift())
+	let defaultTime = {
+		hours: "00",
+		minutes: "00",
+		seconds: "00",
+		milliseconds: "00",
+	};
+
+	function updateTimeFromHash() {
+		const [hash, time] = window.location.hash.slice(1).split("/");
+
+		// Si no hay tiempo o el tiempo no está en el formato correcto, establecer a "00:00:00:00"
+		function isValidTime(time) {
+			const timeArray = time ? time.split("_") : [];
+			const twoDigitPattern = /^\d{2}$/;
+			return (
+				timeArray.length === 4 &&
+				timeArray.every(function (element) {
+					return twoDigitPattern.test(element);
+				})
 			);
 		}
-		return null; // Returns null if the cookie doesn't exist
+
+		editTime({
+			type: hash,
+			time: isValidTime(time) ? parseTime(time) : defaultTime,
+		});
+
+		showPage(hash in pageContainers ? hash : "countdown");
+		window.location.hash =
+			hash in pageContainers
+				? window.location.hash
+				: "countdown/00_00_00_00";
 	}
 
-	function deleteJsonCookie(name) {
-		document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+	// Función para convertir el tiempo de formato de cadena a objeto
+	function parseTime(time) {
+		const [hours, minutes, seconds, milliseconds] = time.split("_");
+		return { hours, minutes, seconds, milliseconds };
 	}
 
-	document.addEventListener("user-data", (e: UserDataEvent) => {
-		const userData = e.detail.data;
-		const functionName = e.detail.function;
-
-		switch (functionName) {
-			case "set":
-				setJsonCookie("user-data", userData);
-				break;
-			case "delete":
-				deleteJsonCookie("user-data");
-				break;
-		}
-	});
-
-	// Check hash on initial load
+	// Llamar a la función al cargar la página o cuando cambie el hash
 	if (window.location.hash) {
-		const hash = window.location.hash.slice(1);
-		if (hash in pageContainers) {
-			showPage(hash);
-		}
+		updateTimeFromHash();
 	} else {
-		window.location.hash = "countdown"; //
+		window.location.hash = "countdown/00_00_00_00";
 		showPage("countdown");
 	}
 </script>
