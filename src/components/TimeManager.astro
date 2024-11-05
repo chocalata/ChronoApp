@@ -165,7 +165,7 @@ const functionType = Astro.props.functionType;
 			document.addEventListener("mouseup", () => this.handleEnd());
 
 			document.addEventListener("touchstart", (e) => this.handleStart(e));
-			document.addEventListener("touchmove", (e) => this.handleMove(e));
+			document.addEventListener("touchmove", (e) => this.handleMove(e), { passive: false });
 			document.addEventListener("touchend", () => this.handleEnd());
 		}
 
@@ -192,10 +192,13 @@ const functionType = Astro.props.functionType;
 				milliseconds: this.getInputValue("milliseconds"),
 			};
 
-			const updateFunctionData = new CustomEvent(`updateFunctionData-${this.functionType}`, {
-				detail: { time: time },
-				bubbles: true,
-			});
+			const updateFunctionData = new CustomEvent(
+				`updateFunctionData-${this.functionType}`,
+				{
+					detail: { time: time },
+					bubbles: true,
+				}
+			);
 			document.dispatchEvent(updateFunctionData);
 		}
 
@@ -288,6 +291,8 @@ const functionType = Astro.props.functionType;
 
 		handleMove(event) {
 			if (!this.isDragging || !this.editingEvent) return;
+
+			event.preventDefault();
 
 			const input = this.editingEvent.target;
 			const value = Number(input.value);
