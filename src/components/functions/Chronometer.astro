@@ -53,7 +53,6 @@ const functionType = "chronometer";
 	}
 
 	document.addEventListener(`updateFunctionData-${functionType}`, (e) => {
-		console.log("updateFunctionData");
 		const { time } = e.detail;
 
 		setChronometer(

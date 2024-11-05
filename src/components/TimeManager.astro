@@ -154,7 +154,6 @@ const functionType = Astro.props.functionType;
 
 			this.saveButton.addEventListener("click", () => this.saveTime());
 
-			console.log(`onSelect-${this.functionType}`);
 			document.addEventListener(`onSelect-${this.functionType}`, () => {
 				this.sendTime();
 			});

@@ -5,7 +5,6 @@ import Chronometer from "../components/functions/Chronometer.astro";
 import Countdown from "../components/functions/Countdown.astro";
 import IntervalTimer from "../components/functions/IntervalTimer.astro";
 
-console.log("Cargando index");
 ---
 
 <Layout title="Chrono app">
@@ -86,6 +85,24 @@ console.log("Cargando index");
 	document.addEventListener("onTimeEdit", ((e: PageTimeEvent) => {
 		editTime(e.detail);
 	}) as EventListener);
+
+	let wakeLock = null;
+	document.addEventListener("wakeLock", async () => {
+		try {
+			wakeLock = await navigator.wakeLock.request("screen");
+		} catch (err) {
+			console.error(
+				`Error activando el Wake Lock: ${err.name}, ${err.message}`
+			);
+		}
+	});
+
+	document.addEventListener("wakeLockRelease", async () => {
+		if (wakeLock !== null) {
+			await wakeLock.release();
+			wakeLock = null;
+		}
+	});
 
 	let defaultTime = {
 		hours: "00",

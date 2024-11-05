@@ -1,7 +1,5 @@
 ---
 import CountdownNumber from "./old-CountdownNumber.astro";
-
-console.log("Cargando Countdown");
 ---
 
 <div class="flex-col">
@@ -61,7 +59,6 @@ console.log("Cargando Countdown");
 			document
 				.getElementById(`${timeType}-sub`)
 				.addEventListener("click", function () {
-					console.log(`Restando ${timeType}`);
 					//Input type number
 					const timeElement = document.getElementById(
 						`${timeType}-time`,
@@ -96,8 +93,6 @@ console.log("Cargando Countdown");
 			document
 				.getElementById(`${timeType}-sum`)
 				.addEventListener("click", function () {
-					console.log(`Sumando ${timeType}`);
-
 					const timeElement = document.getElementById(
 						`${timeType}-time`,
 					);
@@ -128,8 +123,6 @@ console.log("Cargando Countdown");
 
 	// Start button
 	startButton.addEventListener("click", function () {
-		console.log("Start");
-
 		if (timeInterval) {
 			clearInterval(timeInterval);
 		}
@@ -192,8 +185,6 @@ console.log("Cargando Countdown");
 
 	// Pause button
 	pauseButton.addEventListener("click", function () {
-		console.log("Pause");
-
 		favicon.setAttribute("href", "/img/stop.svg");
 
 		pauseButton.classList.add("hidden");
@@ -206,8 +197,6 @@ console.log("Cargando Countdown");
 
 	// Reset button
 	resetButton.addEventListener("click", function () {
-		console.log("Reset");
-
 		favicon.setAttribute("href", "/img/stop.svg");
 
 		stopAlarm();

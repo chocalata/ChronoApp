@@ -54,7 +54,6 @@ const functionType = Astro.props.functionType;
 </div>
 
 <script define:vars={{ functionType }}>
-
 	class ButtonManager {
 		constructor() {
 			this.isRunning = false;
@@ -95,21 +94,39 @@ const functionType = Astro.props.functionType;
 			const svg = this.toggleButton.querySelector("svg");
 
 			if (running) {
-				document.querySelectorAll(
-					`input[data-function-type="${functionType}"]`
-				).forEach((input) => {
-					input.disabled = true;
+				// dispatch wakeLock custom event listener
+
+				const wakeLock = new CustomEvent("wakeLock", {
+					bubbles: true,
 				});
+
+				document.dispatchEvent(wakeLock);
+
+				document
+					.querySelectorAll(
+						`input[data-function-type="${functionType}"]`
+					)
+					.forEach((input) => {
+						input.disabled = true;
+					});
 
 				svg.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"></path>';
 				this.chronoImage.src = "/img/start.svg";
 				this.favicon.href = "/img/start.svg";
 			} else {
-				document.querySelectorAll(
-					`input[data-function-type="${functionType}"]`
-				).forEach((input) => {
-					input.disabled = false;
+				const wakeLockRelease = new CustomEvent("wakeLockRelease", {
+					bubbles: true,
 				});
+
+				document.dispatchEvent(wakeLockRelease);
+
+				document
+					.querySelectorAll(
+						`input[data-function-type="${functionType}"]`
+					)
+					.forEach((input) => {
+						input.disabled = false;
+					});
 
 				svg.innerHTML =
 					'<polygon points="5 3 19 12 5 21 5 3"></polygon>';
