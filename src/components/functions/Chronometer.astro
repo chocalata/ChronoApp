@@ -1,6 +1,7 @@
 ---
 import TimeManager from "../TimeManager.astro";
 import Buttons from "./Buttons.astro";
+import SavedTimers from "./SavedTimers.astro";
 
 const functionType = "chronometer";
 ---
@@ -8,6 +9,8 @@ const functionType = "chronometer";
 <TimeManager functionType={functionType} />
 
 <Buttons functionType={functionType} />
+
+<SavedTimers functionType={functionType} />
 
 <style></style>
 

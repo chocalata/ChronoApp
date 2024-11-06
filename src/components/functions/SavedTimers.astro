@@ -1,0 +1,110 @@
+---
+interface Props {
+	functionType: string;
+}
+
+const functionType = Astro.props.functionType;
+---
+
+<div class="mt-10">
+	<timers
+		id=`timers-${functionType}`
+		class="m-auto flex w-full max-w-4xl flex-wrap justify-center gap-4"
+	>
+	</timers>
+</div>
+
+<script define:vars={{ functionType }}>
+	const hours = document.getElementById(`hours-${functionType}`);
+	const minutes = document.getElementById(`minutes-${functionType}`);
+	const seconds = document.getElementById(`seconds-${functionType}`);
+	const milliseconds = document.getElementById(
+		`milliseconds-${functionType}`
+	);
+
+	let stringUserData = localStorage.getItem("user-data");
+	let userData = stringUserData ? JSON.parse(stringUserData) : {};
+
+	if (userData[functionType]) {
+		userData[functionType].forEach((functionData, index) => {
+			addTimer(functionData, index);
+		});
+	}
+
+	document.addEventListener(`addTimer-${functionType}`, (e) => {
+		const { time, disabled } = e.detail;
+
+		// Recuperar datos del localStorage y asegurarse de que userData no sea null
+		let stringUserData = localStorage.getItem("user-data");
+		let userData = stringUserData ? JSON.parse(stringUserData) : {};
+
+		// Inicializar el array correspondiente si no existe
+		if (!userData[functionType]) {
+			userData[functionType] = [];
+		}
+
+		// Agregar el nuevo tiempo al array
+
+		userData[functionType].unshift(time);
+
+		// Guardar los datos actualizados en localStorage
+		localStorage.setItem("user-data", JSON.stringify(userData));
+
+		const index = userData[functionType].length;
+
+		addTimer(time, index, disabled);
+	});
+
+	function addTimer(functionData, index, disabled = false) {
+		const timerEntry = document.createElement("button");
+		timerEntry.id = `timer-${functionType}-${index}`;
+
+		timerEntry.dataset.functionType = functionType;
+
+		timerEntry.className = `timer-entry
+                flex justify-center p-4
+                bg-gray-700/20 text-white rounded-lg 
+                shadow-lg font-mono text-2xl hover:shadow-xl hover:bg-gray-500 hover:text-app-orange cursor-pointer
+            `;
+
+		if (disabled) {
+			timerEntry.disabled = true;
+
+			timerEntry.classList.add("cursor-not-allowed");
+			timerEntry.classList.remove("cursor-pointer");
+		}
+
+		// Set the timer text content
+		timerEntry.textContent = `${functionData.hours}:${functionData.minutes}:${functionData.seconds}.${functionData.milliseconds}`;
+
+		timerEntry.addEventListener("click", (e) => {
+			editInputTimer(functionData);
+
+			const updateFunctionData = new CustomEvent(
+				`updateFunctionData-${functionType}`,
+				{
+					detail: { time: functionData },
+					bubbles: true,
+				}
+			);
+
+			document.dispatchEvent(updateFunctionData);
+
+			const editTime = new CustomEvent("editTime", {
+				detail: { type: functionType, time: functionData },
+				bubbles: true,
+			});
+
+			document.dispatchEvent(editTime);
+		});
+		// Append the styled timer entry to the timers container
+		document.querySelector(`#timers-${functionType}`).prepend(timerEntry);
+	}
+
+	function editInputTimer(time) {
+		hours.value = time.hours;
+		minutes.value = time.minutes;
+		seconds.value = time.seconds;
+		milliseconds.value = time.milliseconds;
+	}
+</script>

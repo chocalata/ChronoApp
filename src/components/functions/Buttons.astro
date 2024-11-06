@@ -7,12 +7,34 @@ const functionType = Astro.props.functionType;
 ---
 
 <div class="mt-4 flex flex-col space-y-4">
+	<div class="text-center">
+		<button
+			id=`save-${functionType}`
+			data-action="save"
+			data-function-type={functionType}
+			class="rounded-full bg-green-500/30 p-4 text-white transition-colors hover:bg-green-500 xl:p-5"
+		>
+			<svg
+				class="h-8 w-8 xl:h-10 xl:w-10"
+				xmlns="http://www.w3.org/2000/svg"
+				width="20"
+				height="20"
+				viewBox="0 0 24 24"
+				fill="currentColor"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				><path
+					d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z"
+				></path></svg
+			>
+		</button>
+	</div>
 	<div class="flex justify-center space-x-4">
 		<button
 			id=`toggle-${functionType}`
 			data-action="toggle"
 			data-function-type={functionType}
-			class="rounded-full bg-blue-500/30 p-4 text-white transition-colors hover:bg-blue-600/30 xl:p-5"
+			class="rounded-full bg-blue-500/30 p-4 text-white transition-colors hover:bg-blue-500 xl:p-5"
 		>
 			<svg
 				class="h-8 w-8 xl:h-10 xl:w-10"
@@ -32,7 +54,7 @@ const functionType = Astro.props.functionType;
 			id=`reset-${functionType}`
 			data-action="reset"
 			data-function-type={functionType}
-			class="rounded-full bg-gray-500/30 p-4 text-white transition-colors hover:bg-gray-600/30 xl:p-5"
+			class="rounded-full bg-gray-500/30 p-4 text-white transition-colors hover:bg-gray-500 xl:p-5"
 		>
 			<svg
 				class="h-8 w-8 xl:h-10 xl:w-10"
@@ -54,6 +76,13 @@ const functionType = Astro.props.functionType;
 </div>
 
 <script define:vars={{ functionType }}>
+	const hours = document.getElementById(`hours-${functionType}`);
+	const minutes = document.getElementById(`minutes-${functionType}`);
+	const seconds = document.getElementById(`seconds-${functionType}`);
+	const milliseconds = document.getElementById(
+		`milliseconds-${functionType}`
+	);
+
 	class ButtonManager {
 		constructor() {
 			this.isRunning = false;
@@ -63,6 +92,10 @@ const functionType = Astro.props.functionType;
 				`toggle-${functionType}`
 			);
 			this.resetButton = document.getElementById(`reset-${functionType}`);
+
+			this.saveButton = document.getElementById(`save-${functionType}`);
+
+			this.saveButton.addEventListener("click", () => this.saveTime());
 
 			document.addEventListener(`changeState-${functionType}`, (e) => {
 				const state = e.detail.isRunning;
@@ -89,6 +122,22 @@ const functionType = Astro.props.functionType;
 			});
 		}
 
+		saveTime() {
+			const time = {
+				hours: hours.value,
+				minutes: minutes.value,
+				seconds: seconds.value,
+				milliseconds: milliseconds.value,
+			};
+
+			const addTimer = new CustomEvent(`addTimer-${functionType}`, {
+				detail: { time: time, disabled: this.isRunning },
+				bubbles: true,
+			});
+
+			document.dispatchEvent(addTimer);
+		}
+
 		changeState(running) {
 			this.isRunning = running;
 			const svg = this.toggleButton.querySelector("svg");
@@ -110,6 +159,16 @@ const functionType = Astro.props.functionType;
 						input.disabled = true;
 					});
 
+				document
+					.querySelectorAll(
+						`button[data-function-type="${functionType}"].timer-entry`
+					)
+					.forEach((button) => {
+						button.disabled = true;
+						button.classList.add("cursor-not-allowed");
+						button.classList.remove("cursor-pointer");
+					});
+
 				svg.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"></path>';
 				this.chronoImage.src = "/img/start.svg";
 				this.favicon.href = "/img/start.svg";
@@ -128,6 +187,15 @@ const functionType = Astro.props.functionType;
 						input.disabled = false;
 					});
 
+				document
+					.querySelectorAll(
+						`button[data-function-type="${functionType}"].timer-entry`
+					)
+					.forEach((button) => {
+						button.disabled = false;
+						button.classList.add("cursor-pointer");
+						button.classList.remove("cursor-not-allowed");
+					});
 				svg.innerHTML =
 					'<polygon points="5 3 19 12 5 21 5 3"></polygon>';
 				this.chronoImage.src = "/img/stop.svg";

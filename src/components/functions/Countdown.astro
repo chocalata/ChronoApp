@@ -1,6 +1,7 @@
 ---
 import TimeManager from "../TimeManager.astro";
 import Buttons from "./Buttons.astro";
+import SavedTimers from "./SavedTimers.astro";
 
 const functionType = "countdown";
 ---
@@ -8,6 +9,8 @@ const functionType = "countdown";
 <TimeManager functionType={functionType} />
 
 <Buttons functionType={functionType} />
+
+<SavedTimers functionType={functionType} />
 
 <style></style>
 
@@ -57,11 +60,15 @@ const functionType = "countdown";
 	document.addEventListener(`updateFunctionData-${functionType}`, (e) => {
 		const { time } = e.detail;
 
+		stopAlarm();
+
 		setCountdown(time.hours, time.minutes, time.seconds, time.milliseconds);
 	});
 
 	// Start countdown
 	document.addEventListener(`start-${functionType}`, (e) => {
+		stopAlarm();
+
 		if (remainingTime <= 0) {
 			return;
 		}
@@ -117,19 +124,20 @@ const functionType = "countdown";
 	}
 
 	function runAlarm() {
+		clearInterval(countdownInterval);
 		clearTimeout(alarmTimeout);
 		audio.play();
 
 		alarmLights = setInterval(function () {
 			document.body.style.backgroundColor =
-				document.body.style.backgroundColor == "red"
+				document.body.style.backgroundColor == "rgb(94, 50, 46)"
 					? "#2e323e"
-					: "red";
+					: "rgb(94, 50, 46)";
 		}, 500);
 
 		alarmTimeout = setTimeout(function () {
 			stopAlarm();
-		}, 10000);
+		}, 5000);
 	}
 
 	function stopAlarm() {

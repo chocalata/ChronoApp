@@ -1,7 +1,8 @@
 ---
+
 ---
 
-<nav class="flex justify-center relative">
+<nav class="relative flex justify-center">
 	<ul
 		class="responsive-navbar flex w-full flex-col bg-gray-700 text-center text-white md:w-auto md:flex-row"
 	>
@@ -9,26 +10,21 @@
 			id="countdown-item"
 			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
-			<a class="block p-4" data-page="countdown"
-				>Countdown</a
+			<a class="block p-4" data-page="countdown">Countdown</a>
+		</li>
+		<li
+			id="interval-timer-item"
+			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
+		>
+			<a class="block whitespace-nowrap p-4" data-page="interval-timer"
+				>Interval Timer</a
 			>
 		</li>
 		<li
 			id="chronometer-item"
 			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
 		>
-			<a class="block p-4" data-page="chronometer"
-				>Chronometer</a
-			>
-		</li>
-		<li
-			id="interval-timer-item"
-			class="nav-item cursor-pointer transition duration-300 hover:bg-gray-500 hover:text-app-orange"
-		>
-			<a
-				class="block whitespace-nowrap p-4"
-				data-page="interval-timer">Interval Timer</a
-			>
+			<a class="block p-4" data-page="chronometer">Chronometer</a>
 		</li>
 	</ul>
 </nav>
@@ -43,18 +39,18 @@
 		anchor.addEventListener("click", () => {
 			const page = anchor.dataset.page;
 
-			const onSelect = new CustomEvent("onSelect", {
+			const selectFunction = new CustomEvent("selectFunction", {
 				detail: { page },
 				bubbles: true,
 			}) as PageSelectEvent;
 
-			anchor.dispatchEvent(onSelect);
+			anchor.dispatchEvent(selectFunction);
 
-			const onSelectPage = new CustomEvent(`onSelect-${page}`, {
+			const selectFunctionPage = new CustomEvent(`selectFunction-${page}`, {
 				bubbles: true,
 			});
 
-			anchor.dispatchEvent(onSelectPage);
+			anchor.dispatchEvent(selectFunctionPage);
 		});
 	});
 

@@ -55,27 +55,7 @@ const functionType = Astro.props.functionType;
 			/>
 		</div>
 	</div>
-	<div class="text-center">
-		<button
-			data-action="save"
-			data-function-type={functionType}
-			class="rounded-full bg-green-500/30 p-4 text-white transition-colors hover:bg-green-600/30 xl:p-5"
-		>
-			<svg
-				class="h-8 w-8 xl:h-10 xl:w-10"
-				xmlns="http://www.w3.org/2000/svg"
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="currentColor"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				><path
-					d="M18.1716 1C18.702 1 19.2107 1.21071 19.5858 1.58579L22.4142 4.41421C22.7893 4.78929 23 5.29799 23 5.82843V20C23 21.6569 21.6569 23 20 23H4C2.34315 23 1 21.6569 1 20V4C1 2.34315 2.34315 1 4 1H18.1716ZM4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21L5 21L5 15C5 13.3431 6.34315 12 8 12L16 12C17.6569 12 19 13.3431 19 15V21H20C20.5523 21 21 20.5523 21 20V6.82843C21 6.29799 20.7893 5.78929 20.4142 5.41421L18.5858 3.58579C18.2107 3.21071 17.702 3 17.1716 3H17V5C17 6.65685 15.6569 8 14 8H10C8.34315 8 7 6.65685 7 5V3H4ZM17 21V15C17 14.4477 16.5523 14 16 14L8 14C7.44772 14 7 14.4477 7 15L7 21L17 21ZM9 3H15V5C15 5.55228 14.5523 6 14 6H10C9.44772 6 9 5.55228 9 5V3Z"
-				></path></svg
-			>
-		</button>
-	</div>
+	
 </div>
 
 <style>
@@ -117,7 +97,7 @@ const functionType = Astro.props.functionType;
 </style>
 
 <script define:vars={{ functionType }}>
-	let onTimeEditTimeout;
+	let editTimeTimeout;
 
 	class TimeManager {
 		constructor(functionType) {
@@ -129,9 +109,6 @@ const functionType = Astro.props.functionType;
 			// Initialize DOM elements with proper typing
 			this.inputs = document.querySelectorAll(
 				`input[data-function-type="${this.functionType}"]`
-			);
-			this.saveButton = document.querySelector(
-				`button[data-action="save"][data-function-type="${this.functionType}"]`
 			);
 
 			this.init();
@@ -152,9 +129,7 @@ const functionType = Astro.props.functionType;
 				input.value = time[index];
 			});
 
-			this.saveButton.addEventListener("click", () => this.saveTime());
-
-			document.addEventListener(`onSelect-${this.functionType}`, () => {
+			document.addEventListener(`selectFunction-${this.functionType}`, () => {
 				this.sendTime();
 			});
 
@@ -176,11 +151,11 @@ const functionType = Astro.props.functionType;
 				milliseconds: this.getInputValue("milliseconds"),
 			};
 
-			const onTimeEdit = new CustomEvent("onTimeEdit", {
+			const editTime = new CustomEvent("editTime", {
 				detail: { type: this.functionType, time: time },
 				bubbles: true,
 			});
-			document.dispatchEvent(onTimeEdit);
+			document.dispatchEvent(editTime);
 		}
 
 		updateData() {
@@ -234,35 +209,13 @@ const functionType = Astro.props.functionType;
 
 			this.updateData();
 
-			clearTimeout(onTimeEditTimeout);
-			onTimeEditTimeout = setTimeout(() => {
+			clearTimeout(editTimeTimeout);
+			editTimeTimeout = setTimeout(() => {
 				this.sendTime();
 			}, 300);
 		}
 
-		saveTime() {
-			const time = {
-				hours: this.getInputValue("hours"),
-				minutes: this.getInputValue("minutes"),
-				seconds: this.getInputValue("seconds"),
-				milliseconds: this.getInputValue("milliseconds"),
-			};
-
-			// Recuperar datos del localStorage y asegurarse de que userData no sea null
-			let stringUserData = localStorage.getItem("user-data");
-			let userData = stringUserData ? JSON.parse(stringUserData) : {};
-
-			// Inicializar el array correspondiente si no existe
-			if (!userData[this.functionType]) {
-				userData[this.functionType] = [];
-			}
-
-			// Agregar el nuevo tiempo al array
-			userData[this.functionType].push(time);
-
-			// Guardar los datos actualizados en localStorage
-			localStorage.setItem("user-data", JSON.stringify(userData));
-		}
+		
 
 		getInputValue(unit) {
 			const input = document.querySelector(
